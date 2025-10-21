@@ -43,15 +43,15 @@ const Index = () => {
               <p className="text-xl text-muted-foreground">
                 Proactive, Intelligent, and Human-Centric customer support ecosystem that predicts issues before they arise.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button size="lg" className="bg-primary hover:bg-primary/90 group">
-                  Try Prototype
-                  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                </Button>
-                <Button size="lg" variant="outline" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground">
-                  Request Demo
-                </Button>
-              </div>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Button size="lg" className="bg-primary hover:bg-primary/90 group" onClick={() => window.location.href = '/tickets'}>
+                Try Prototype
+                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+              </Button>
+              <Button size="lg" variant="outline" className="border-primary text-primary hover:bg-primary hover:text-primary-foreground" onClick={() => window.location.href = '/create-ticket'}>
+                Create Ticket
+              </Button>
+            </div>
             </div>
             <div className="relative animate-scale-in">
               <div className="absolute inset-0 bg-gradient-hero opacity-20 blur-3xl rounded-full"></div>
@@ -221,14 +221,14 @@ const Index = () => {
               See It in Action
             </h2>
             <p className="text-xl opacity-90">
-              Experience how our AI ecosystem can transform your telecom support operations. Request a personalized demo today.
+              Experience how our AI ecosystem can transform your telecom support operations. Try our live Smart Ticketing System demo.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" variant="secondary" className="bg-white text-primary hover:bg-white/90">
-                Schedule Demo
+              <Button size="lg" variant="secondary" className="bg-white text-primary hover:bg-white/90" onClick={() => window.location.href = '/tickets'}>
+                Try Live Demo
               </Button>
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
-                View Documentation
+              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10" onClick={() => window.location.href = '/create-ticket'}>
+                Create Sample Ticket
               </Button>
             </div>
           </div>
