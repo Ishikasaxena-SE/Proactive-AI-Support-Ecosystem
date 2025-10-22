@@ -7,10 +7,14 @@ import iconChatbot from "@/assets/icon-chatbot.png";
 import iconCaller from "@/assets/icon-caller.png";
 import iconTicketing from "@/assets/icon-ticketing.png";
 import dashboardMockup from "@/assets/dashboard-mockup.jpg";
+import { NotificationPanel } from "@/components/NotificationPanel";
+import { ChatBot } from "@/components/ChatBot";
 
 const Index = () => {
   return (
     <div className="min-h-screen">
+      <NotificationPanel />
+      <ChatBot />
       {/* Navigation */}
       <nav className="fixed top-0 w-full bg-background/80 backdrop-blur-lg border-b border-border z-50">
         <div className="container mx-auto px-6 py-4 flex justify-between items-center">
