@@ -117,6 +117,7 @@ export const NotificationPanel = () => {
         size="icon"
         onClick={() => setIsOpen(!isOpen)}
         className="relative"
+        aria-label="notifications"
       >
         <Bell className="h-5 w-5" />
         {unreadCount > 0 && (

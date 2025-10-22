@@ -112,37 +112,64 @@ const Index = () => {
                 icon: iconNotification,
                 title: "Proactive Notification Sender",
                 desc: "Predicts and alerts customers before issues arise with AI-powered summaries for clarity",
-                color: "text-primary"
+                color: "text-primary",
+                cta: "Try Notifications",
+                action: "notification"
               },
               {
                 icon: iconChatbot,
                 title: "AI Chatbot Assistant",
                 desc: "Answers queries on billing, plans, and technical issues using contextual understanding",
-                color: "text-secondary"
+                color: "text-secondary",
+                cta: "Chat Now",
+                action: "chat"
               },
               {
                 icon: iconCaller,
                 title: "AI Caller System",
                 desc: "Handles complex or emotional queries empathetically, transferring only when needed",
-                color: "text-accent"
+                color: "text-accent",
+                cta: "Coming Soon",
+                action: "coming-soon"
               },
               {
                 icon: iconTicketing,
                 title: "Smart Ticketing System",
                 desc: "Automatically creates, categorizes, and updates support tickets for unresolved cases",
-                color: "text-primary"
+                color: "text-primary",
+                cta: "View Tickets",
+                action: "tickets"
               }
             ].map((feature, i) => (
               <Card
                 key={i}
-                className="p-6 bg-gradient-card hover:shadow-xl transition-all group cursor-pointer animate-fade-in-up"
+                className="p-6 bg-gradient-card hover:shadow-xl transition-all group animate-fade-in-up flex flex-col"
                 style={{ animationDelay: `${i * 0.1}s` }}
               >
                 <div className="mb-4 transform group-hover:scale-110 transition-transform">
                   <img src={feature.icon} alt={feature.title} className="h-20 w-20 mx-auto" />
                 </div>
                 <h3 className="text-xl font-semibold mb-3 text-center">{feature.title}</h3>
-                <p className="text-muted-foreground text-center text-sm">{feature.desc}</p>
+                <p className="text-muted-foreground text-center text-sm mb-4 flex-grow">{feature.desc}</p>
+                <Button
+                  className="w-full mt-auto"
+                  variant={feature.action === "coming-soon" ? "outline" : "default"}
+                  disabled={feature.action === "coming-soon"}
+                  onClick={() => {
+                    if (feature.action === "notification") {
+                      const notificationBtn = document.querySelector('button[aria-label="notifications"]') as HTMLButtonElement;
+                      if (notificationBtn) notificationBtn.click();
+                    } else if (feature.action === "chat") {
+                      const chatBtn = document.querySelector('button[aria-label="chat"]') as HTMLButtonElement;
+                      if (chatBtn) chatBtn.click();
+                    } else if (feature.action === "tickets") {
+                      window.location.href = "/tickets";
+                    }
+                  }}
+                >
+                  {feature.cta}
+                  {feature.action !== "coming-soon" && <ArrowRight className="ml-2 h-4 w-4" />}
+                </Button>
               </Card>
             ))}
           </div>

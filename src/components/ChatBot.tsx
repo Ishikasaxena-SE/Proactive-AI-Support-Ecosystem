@@ -119,6 +119,7 @@ export const ChatBot = () => {
           size="icon"
           onClick={() => setIsOpen(true)}
           className="h-14 w-14 rounded-full shadow-lg"
+          aria-label="chat"
         >
           <MessageCircle className="h-6 w-6" />
         </Button>
