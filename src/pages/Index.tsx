@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowRight, Bell, MessageSquare, Phone, Ticket, CheckCircle2, Users, TrendingDown, Zap } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import heroImage from "@/assets/hero-ai-telecom.jpg";
 import iconNotification from "@/assets/icon-notification.png";
 import iconChatbot from "@/assets/icon-chatbot.png";
@@ -11,6 +12,8 @@ import { NotificationPanel } from "@/components/NotificationPanel";
 import { ChatBot } from "@/components/ChatBot";
 
 const Index = () => {
+  const navigate = useNavigate();
+  
   return (
     <div className="min-h-screen">
       <NotificationPanel />
@@ -113,32 +116,32 @@ const Index = () => {
                 title: "Proactive Notification Sender",
                 desc: "Predicts and alerts customers before issues arise with AI-powered summaries for clarity",
                 color: "text-primary",
-                cta: "Try Notifications",
-                action: "notification"
+                cta: "Learn More",
+                action: "notifications"
               },
               {
                 icon: iconChatbot,
                 title: "AI Chatbot Assistant",
                 desc: "Answers queries on billing, plans, and technical issues using contextual understanding",
                 color: "text-secondary",
-                cta: "Chat Now",
-                action: "chat"
+                cta: "Learn More",
+                action: "chatbot"
               },
               {
                 icon: iconCaller,
                 title: "AI Caller System",
                 desc: "Handles complex or emotional queries empathetically, transferring only when needed",
                 color: "text-accent",
-                cta: "Coming Soon",
-                action: "coming-soon"
+                cta: "Learn More",
+                action: "ai-caller"
               },
               {
                 icon: iconTicketing,
                 title: "Smart Ticketing System",
                 desc: "Automatically creates, categorizes, and updates support tickets for unresolved cases",
                 color: "text-primary",
-                cta: "View Tickets",
-                action: "tickets"
+                cta: "Learn More",
+                action: "smart-ticketing"
               }
             ].map((feature, i) => (
               <Card
@@ -153,22 +156,10 @@ const Index = () => {
                 <p className="text-muted-foreground text-center text-sm mb-4 flex-grow">{feature.desc}</p>
                 <Button
                   className="w-full mt-auto"
-                  variant={feature.action === "coming-soon" ? "outline" : "default"}
-                  disabled={feature.action === "coming-soon"}
-                  onClick={() => {
-                    if (feature.action === "notification") {
-                      const notificationBtn = document.querySelector('button[aria-label="notifications"]') as HTMLButtonElement;
-                      if (notificationBtn) notificationBtn.click();
-                    } else if (feature.action === "chat") {
-                      const chatBtn = document.querySelector('button[aria-label="chat"]') as HTMLButtonElement;
-                      if (chatBtn) chatBtn.click();
-                    } else if (feature.action === "tickets") {
-                      window.location.href = "/tickets";
-                    }
-                  }}
+                  onClick={() => navigate(`/${feature.action}`)}
                 >
                   {feature.cta}
-                  {feature.action !== "coming-soon" && <ArrowRight className="ml-2 h-4 w-4" />}
+                  <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Card>
             ))}
