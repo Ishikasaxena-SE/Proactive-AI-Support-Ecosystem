@@ -11,6 +11,7 @@ import NotificationSender from "./pages/NotificationSender";
 import ChatbotAssistant from "./pages/ChatbotAssistant";
 import AICaller from "./pages/AICaller";
 import SmartTicketing from "./pages/SmartTicketing";
+import InteractiveDemo from "./pages/InteractiveDemo";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/chatbot" element={<ChatbotAssistant />} />
           <Route path="/ai-caller" element={<AICaller />} />
           <Route path="/smart-ticketing" element={<SmartTicketing />} />
+          <Route path="/demo" element={<InteractiveDemo />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

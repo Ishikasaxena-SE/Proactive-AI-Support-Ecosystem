@@ -1,0 +1,453 @@
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { ArrowLeft, Wifi, WifiOff, CheckCircle, MessageSquare, Phone, Ticket, UserCheck } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+
+type DemoStep = "initial" | "detecting" | "notification" | "resolve-options" | "ai-chat" | "ai-call" | "ticket-creation" | "human-agent" | "completed";
+
+const InteractiveDemo = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [step, setStep] = useState<DemoStep>("initial");
+  const [chatMessages, setChatMessages] = useState<Array<{ role: string; content: string }>>([]);
+  const [userInput, setUserInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [ticketId, setTicketId] = useState<string>("");
+
+  const resetDemo = () => {
+    setStep("initial");
+    setChatMessages([]);
+    setUserInput("");
+    setTicketId("");
+  };
+
+  const startDemo = () => {
+    setStep("detecting");
+    setTimeout(() => {
+      setStep("notification");
+    }, 2000);
+  };
+
+  const handleNotResolved = () => {
+    setStep("resolve-options");
+  };
+
+  const handleAIChat = () => {
+    setStep("ai-chat");
+    setChatMessages([
+      { role: "assistant", content: "Hello! I understand you're experiencing network connectivity issues. Let me help you troubleshoot this problem. Can you tell me what device you're using?" }
+    ]);
+  };
+
+  const handleAICall = () => {
+    setStep("ai-call");
+    toast({
+      title: "AI Voice Call Initiated",
+      description: "Connecting you to our AI voice assistant...",
+    });
+    setTimeout(() => {
+      setStep("ticket-creation");
+    }, 3000);
+  };
+
+  const sendChatMessage = async () => {
+    if (!userInput.trim()) return;
+
+    const newMessage = { role: "user", content: userInput };
+    setChatMessages([...chatMessages, newMessage]);
+    setUserInput("");
+    setIsLoading(true);
+
+    try {
+      const response = await supabase.functions.invoke("chat", {
+        body: {
+          messages: [...chatMessages, newMessage],
+        },
+      });
+
+      if (response.error) throw response.error;
+
+      const reader = response.data.getReader();
+      const decoder = new TextDecoder();
+      let aiResponse = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        
+        const chunk = decoder.decode(value);
+        const lines = chunk.split("\n");
+        
+        for (const line of lines) {
+          if (line.startsWith("data: ")) {
+            const data = line.slice(6);
+            if (data === "[DONE]") break;
+            
+            try {
+              const parsed = JSON.parse(data);
+              const content = parsed.choices?.[0]?.delta?.content;
+              if (content) {
+                aiResponse += content;
+              }
+            } catch (e) {
+              // Ignore parse errors
+            }
+          }
+        }
+      }
+
+      setChatMessages(prev => [...prev, { role: "assistant", content: aiResponse }]);
+    } catch (error) {
+      console.error("Chat error:", error);
+      toast({
+        title: "Error",
+        description: "Failed to send message",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleChatNotResolved = () => {
+    setStep("ticket-creation");
+  };
+
+  const createTicket = async () => {
+    setIsLoading(true);
+    
+    try {
+      const summary = chatMessages.length > 0 
+        ? `Customer experienced network connectivity issues. Chat history: ${chatMessages.slice(0, 3).map(m => m.content).join(" ")}`
+        : "Network connectivity issues detected. Customer unable to resolve through proactive notification.";
+
+      const { data, error } = await supabase
+        .from("tickets")
+        .insert({
+          customer_name: "Demo User",
+          customer_email: "demo@example.com",
+          customer_phone: "+1234567890",
+          title: "Network Connectivity Issue",
+          description: summary,
+          category: "technical",
+          priority: "high",
+          status: "open",
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setTicketId(data.id);
+      setStep("human-agent");
+      
+      toast({
+        title: "Ticket Created",
+        description: `Ticket #${data.id.slice(0, 8)} has been automatically generated`,
+      });
+    } catch (error) {
+      console.error("Ticket creation error:", error);
+      toast({
+        title: "Error",
+        description: "Failed to create ticket",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (step === "ticket-creation") {
+      createTicket();
+    }
+  }, [step]);
+
+  const handleHumanEscalation = () => {
+    setStep("completed");
+    toast({
+      title: "Escalated to Human Agent",
+      description: "A senior support agent will contact you shortly",
+    });
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-main">
+      <div className="container mx-auto px-4 py-8">
+        <Button
+          variant="ghost"
+          onClick={() => navigate("/")}
+          className="mb-6"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back to Home
+        </Button>
+
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-8">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-primary bg-clip-text text-transparent">
+              Interactive Support Demo
+            </h1>
+            <p className="text-xl text-muted-foreground">
+              Experience the complete AI-powered support journey
+            </p>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-8">
+            {/* Phone Mockup */}
+            <div className="flex justify-center items-start">
+              <div className="relative">
+                <div className="w-[320px] h-[640px] bg-background border-8 border-foreground/20 rounded-[3rem] shadow-2xl overflow-hidden">
+                  {/* Phone Screen */}
+                  <div className="h-full bg-gradient-to-b from-background to-muted/30 p-6 overflow-y-auto">
+                    {step === "initial" && (
+                      <div className="flex flex-col items-center justify-center h-full">
+                        <Wifi className="h-20 w-20 text-primary mb-4" />
+                        <h3 className="text-xl font-semibold mb-2">Network Status</h3>
+                        <p className="text-muted-foreground text-center mb-6">All systems operational</p>
+                        <Button onClick={startDemo} className="w-full">
+                          Start Demo
+                        </Button>
+                      </div>
+                    )}
+
+                    {step === "detecting" && (
+                      <div className="flex flex-col items-center justify-center h-full">
+                        <WifiOff className="h-20 w-20 text-destructive mb-4 animate-pulse" />
+                        <h3 className="text-xl font-semibold mb-2">Detecting Issue...</h3>
+                        <p className="text-muted-foreground text-center">Analyzing network connectivity</p>
+                      </div>
+                    )}
+
+                    {step === "notification" && (
+                      <Card className="p-6 bg-gradient-card">
+                        <div className="flex items-start gap-3 mb-4">
+                          <WifiOff className="h-6 w-6 text-destructive flex-shrink-0 mt-1" />
+                          <div>
+                            <h3 className="font-semibold text-lg mb-2">Network Outage Alert</h3>
+                            <p className="text-sm text-muted-foreground mb-3">
+                              We've detected a network outage in your area. Our team is working on it. Expected resolution: 30 minutes.
+                            </p>
+                            <p className="text-xs text-muted-foreground mb-4">
+                              <strong>What we're doing:</strong> Rerouting traffic through backup servers. No action needed from you.
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button variant="outline" size="sm" className="flex-1" onClick={() => setStep("completed")}>
+                            OK, Thanks
+                          </Button>
+                          <Button size="sm" className="flex-1" onClick={handleNotResolved}>
+                            Not Resolved
+                          </Button>
+                        </div>
+                      </Card>
+                    )}
+
+                    {step === "resolve-options" && (
+                      <div className="space-y-4">
+                        <h3 className="text-xl font-semibold mb-4 text-center">How would you like help?</h3>
+                        <Button
+                          className="w-full h-auto py-6 flex-col gap-2"
+                          onClick={handleAIChat}
+                        >
+                          <MessageSquare className="h-8 w-8" />
+                          <span className="font-semibold">AI Chat Support</span>
+                          <span className="text-xs opacity-80">Get instant text-based help</span>
+                        </Button>
+                        <Button
+                          className="w-full h-auto py-6 flex-col gap-2"
+                          onClick={handleAICall}
+                        >
+                          <Phone className="h-8 w-8" />
+                          <span className="font-semibold">AI Voice Call</span>
+                          <span className="text-xs opacity-80">Talk to our AI assistant</span>
+                        </Button>
+                      </div>
+                    )}
+
+                    {step === "ai-chat" && (
+                      <div className="flex flex-col h-full">
+                        <div className="flex-1 space-y-3 mb-4 overflow-y-auto">
+                          {chatMessages.map((msg, i) => (
+                            <div
+                              key={i}
+                              className={`p-3 rounded-lg ${
+                                msg.role === "assistant"
+                                  ? "bg-primary/10 text-foreground"
+                                  : "bg-secondary/10 text-foreground ml-8"
+                              }`}
+                            >
+                              <p className="text-sm">{msg.content}</p>
+                            </div>
+                          ))}
+                          {isLoading && (
+                            <div className="p-3 rounded-lg bg-primary/10">
+                              <p className="text-sm text-muted-foreground">AI is typing...</p>
+                            </div>
+                          )}
+                        </div>
+                        <div className="space-y-2">
+                          <div className="flex gap-2">
+                            <input
+                              type="text"
+                              value={userInput}
+                              onChange={(e) => setUserInput(e.target.value)}
+                              onKeyPress={(e) => e.key === "Enter" && sendChatMessage()}
+                              placeholder="Type your message..."
+                              className="flex-1 px-3 py-2 rounded-lg border bg-background text-sm"
+                              disabled={isLoading}
+                            />
+                            <Button size="sm" onClick={sendChatMessage} disabled={isLoading}>
+                              Send
+                            </Button>
+                          </div>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="w-full"
+                            onClick={handleChatNotResolved}
+                          >
+                            Issue Not Resolved
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+
+                    {step === "ai-call" && (
+                      <div className="flex flex-col items-center justify-center h-full">
+                        <div className="bg-primary/20 rounded-full p-8 mb-4 animate-pulse">
+                          <Phone className="h-16 w-16 text-primary" />
+                        </div>
+                        <h3 className="text-xl font-semibold mb-2">AI Voice Call Active</h3>
+                        <p className="text-muted-foreground text-center text-sm">
+                          Our AI assistant is analyzing your issue...
+                        </p>
+                      </div>
+                    )}
+
+                    {(step === "ticket-creation" || step === "human-agent") && (
+                      <div className="space-y-4">
+                        <div className="bg-primary/10 rounded-lg p-4 mb-4">
+                          <div className="flex items-start gap-3">
+                            <Ticket className="h-6 w-6 text-primary flex-shrink-0 mt-1" />
+                            <div>
+                              <h3 className="font-semibold mb-2">Ticket Created</h3>
+                              <p className="text-sm text-muted-foreground mb-2">
+                                Ticket #{ticketId.slice(0, 8)}
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                Your issue has been documented with all chat history and will be reviewed by our team.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {step === "human-agent" && (
+                          <Button
+                            className="w-full h-auto py-6 flex-col gap-2"
+                            onClick={handleHumanEscalation}
+                          >
+                            <UserCheck className="h-8 w-8" />
+                            <span className="font-semibold">Escalate to Human Agent</span>
+                            <span className="text-xs opacity-80">Speak with a senior support specialist</span>
+                          </Button>
+                        )}
+                      </div>
+                    )}
+
+                    {step === "completed" && (
+                      <div className="flex flex-col items-center justify-center h-full text-center">
+                        <CheckCircle className="h-20 w-20 text-primary mb-4" />
+                        <h3 className="text-xl font-semibold mb-2">Demo Complete!</h3>
+                        <p className="text-muted-foreground mb-6">
+                          {ticketId 
+                            ? "A human agent will contact you shortly to resolve your issue."
+                            : "Thank you for trying our AI-powered support system!"}
+                        </p>
+                        <Button onClick={resetDemo} className="w-full">
+                          Restart Demo
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Info Panel */}
+            <div className="space-y-6">
+              <Card className="p-6 bg-gradient-card">
+                <h2 className="text-2xl font-bold mb-4">Current Step</h2>
+                <div className="space-y-3">
+                  {[
+                    { step: "initial", label: "Network Monitoring", active: step === "initial" },
+                    { step: "detecting", label: "Issue Detection", active: step === "detecting" },
+                    { step: "notification", label: "Proactive Alert", active: step === "notification" },
+                    { step: "resolve-options", label: "Support Options", active: step === "resolve-options" },
+                    { step: "ai-chat", label: "AI Chat", active: step === "ai-chat" || step === "ai-call" },
+                    { step: "ticket-creation", label: "Ticket Creation", active: step === "ticket-creation" || step === "human-agent" },
+                    { step: "completed", label: "Resolution", active: step === "completed" },
+                  ].map((item, i) => (
+                    <div
+                      key={i}
+                      className={`flex items-center gap-3 p-3 rounded-lg transition-all ${
+                        item.active ? "bg-primary/20 border border-primary" : "bg-muted/30"
+                      }`}
+                    >
+                      <div
+                        className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                          item.active ? "bg-primary text-primary-foreground" : "bg-muted"
+                        }`}
+                      >
+                        {i + 1}
+                      </div>
+                      <span className={item.active ? "font-semibold" : "text-muted-foreground"}>
+                        {item.label}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+
+              <Card className="p-6 bg-gradient-card">
+                <h3 className="font-semibold mb-3">What's Happening?</h3>
+                <div className="space-y-2 text-sm text-muted-foreground">
+                  {step === "initial" && (
+                    <p>The system is monitoring network connectivity in real-time, ready to detect and alert about any issues.</p>
+                  )}
+                  {step === "detecting" && (
+                    <p>AI is analyzing network patterns and detecting a connectivity issue in your area.</p>
+                  )}
+                  {step === "notification" && (
+                    <p>A proactive notification is sent before you even notice the issue, with clear information about what's happening and estimated resolution time.</p>
+                  )}
+                  {step === "resolve-options" && (
+                    <p>The system offers multiple ways to get help - either through text chat or voice call with our AI assistant.</p>
+                  )}
+                  {step === "ai-chat" && (
+                    <p>Our AI chatbot uses Gemini 2.5 Flash to understand your issue and provide real-time troubleshooting guidance.</p>
+                  )}
+                  {step === "ai-call" && (
+                    <p>The AI voice assistant can handle complex conversations with natural language understanding and empathetic responses.</p>
+                  )}
+                  {(step === "ticket-creation" || step === "human-agent") && (
+                    <p>If AI can't fully resolve the issue, a support ticket is automatically created with all conversation history for seamless handoff to human agents.</p>
+                  )}
+                  {step === "completed" && (
+                    <p>The support journey is complete! The system successfully guided you through detection, AI assistance, ticket creation, and human escalation when needed.</p>
+                  )}
+                </div>
+              </Card>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default InteractiveDemo;
