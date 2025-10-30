@@ -117,6 +117,34 @@ export default {
           "50%": {
             transform: "translateY(-20px)"
           }
+        },
+        "glow-pulse": {
+          "0%, 100%": {
+            opacity: "1",
+            filter: "brightness(1)"
+          },
+          "50%": {
+            opacity: "0.8",
+            filter: "brightness(1.2)"
+          }
+        },
+        "slide-up": {
+          "0%": {
+            transform: "translateY(100px)",
+            opacity: "0"
+          },
+          "100%": {
+            transform: "translateY(0)",
+            opacity: "1"
+          }
+        },
+        "shimmer": {
+          "0%": {
+            backgroundPosition: "-1000px 0"
+          },
+          "100%": {
+            backgroundPosition: "1000px 0"
+          }
         }
       },
       animation: {
@@ -126,11 +154,17 @@ export default {
         "fade-in-up": "fade-in-up 0.8s ease-out",
         "scale-in": "scale-in 0.5s ease-out",
         "float": "float 3s ease-in-out infinite",
+        "glow-pulse": "glow-pulse 2s ease-in-out infinite",
+        "slide-up": "slide-up 0.6s ease-out",
+        "shimmer": "shimmer 3s linear infinite",
       },
       backgroundImage: {
         "gradient-hero": "var(--gradient-hero)",
-        "gradient-card": "var(--gradient-card)",
+        "gradient-primary": "var(--gradient-primary)",
+        "gradient-secondary": "var(--gradient-secondary)",
         "gradient-accent": "var(--gradient-accent)",
+        "gradient-card": "var(--gradient-card)",
+        "gradient-mesh": "var(--gradient-mesh)",
       },
     },
   },

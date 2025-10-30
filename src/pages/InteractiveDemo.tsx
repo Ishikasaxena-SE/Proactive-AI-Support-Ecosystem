@@ -437,34 +437,39 @@ const InteractiveDemo = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-main">
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-mesh opacity-50"></div>
+      <div className="absolute top-20 right-10 w-72 h-72 bg-secondary/20 rounded-full blur-3xl animate-float"></div>
+      <div className="absolute bottom-20 left-10 w-96 h-96 bg-accent/20 rounded-full blur-3xl animate-float" style={{ animationDelay: "1.5s" }}></div>
+      
+      <div className="container mx-auto px-4 py-8 relative z-10">
         <Button
           variant="ghost"
           onClick={() => navigate("/")}
-          className="mb-6"
+          className="mb-6 hover:bg-white/10 interactive-scale"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Home
         </Button>
 
         <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-8">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-primary bg-clip-text text-transparent">
+          <div className="text-center mb-8 animate-fade-in">
+            <h1 className="text-4xl md:text-6xl font-bold mb-4 gradient-text">
               Interactive Support Demo
             </h1>
-            <p className="text-xl text-muted-foreground">
+            <p className="text-xl text-foreground/70">
               Experience the complete AI-powered support journey
             </p>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-8">
             {/* Phone Mockup */}
-            <div className="flex justify-center items-start">
+            <div className="flex justify-center items-start animate-scale-in">
               <div className="relative">
-                <div className="w-[320px] h-[640px] bg-background border-8 border-foreground/20 rounded-[3rem] shadow-2xl overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-primary opacity-20 blur-3xl rounded-full"></div>
+                <div className="w-[320px] h-[640px] bg-gradient-to-br from-gray-900 to-black border-8 border-foreground/20 rounded-[3rem] shadow-2xl overflow-hidden relative hover-glow">
                   {/* Phone Screen */}
-                  <div className="h-full bg-gradient-to-b from-background to-muted/30 p-6 overflow-y-auto">
+                  <div className="h-full glass-strong p-6 overflow-y-auto">
                     {step === "initial" && (
                       <div className="flex flex-col items-center justify-center h-full">
                         <Wifi className="h-20 w-20 text-primary mb-4" />
@@ -678,33 +683,34 @@ const InteractiveDemo = () => {
             </div>
 
             {/* Info Panel */}
-            <div className="space-y-6">
-              <Card className="p-6 bg-gradient-card">
-                <h2 className="text-2xl font-bold mb-4">Current Step</h2>
+            <div className="space-y-6 animate-slide-up">
+              <Card className="glass-strong p-6 border-white/10 hover-glow">
+                <h2 className="text-2xl font-bold mb-4 gradient-text">Current Step</h2>
                 <div className="space-y-3">
                   {[
-                    { step: "initial", label: "Network Monitoring", active: step === "initial" },
-                    { step: "detecting", label: "Issue Detection", active: step === "detecting" },
-                    { step: "notification", label: "Proactive Alert", active: step === "notification" },
-                    { step: "resolve-options", label: "Support Options", active: step === "resolve-options" },
-                    { step: "ai-chat", label: "AI Chat", active: step === "ai-chat" || step === "ai-call" },
-                    { step: "ticket-creation", label: "Ticket Creation", active: step === "ticket-creation" || step === "human-agent" },
-                    { step: "completed", label: "Resolution", active: step === "completed" },
+                    { step: "initial", label: "Network Monitoring", active: step === "initial", icon: "🔍" },
+                    { step: "detecting", label: "Issue Detection", active: step === "detecting", icon: "⚠️" },
+                    { step: "notification", label: "Proactive Alert", active: step === "notification", icon: "🔔" },
+                    { step: "resolve-options", label: "Support Options", active: step === "resolve-options", icon: "🎯" },
+                    { step: "ai-chat", label: "AI Chat", active: step === "ai-chat" || step === "ai-call", icon: "💬" },
+                    { step: "ticket-creation", label: "Ticket Creation", active: step === "ticket-creation" || step === "human-agent", icon: "🎫" },
+                    { step: "completed", label: "Resolution", active: step === "completed", icon: "✅" },
                   ].map((item, i) => (
                     <div
                       key={i}
-                      className={`flex items-center gap-3 p-3 rounded-lg transition-all ${
-                        item.active ? "bg-primary/20 border border-primary" : "bg-muted/30"
+                      className={`flex items-center gap-3 p-3 rounded-lg transition-all interactive-scale ${
+                        item.active ? "bg-gradient-primary border border-white/20 shadow-glow" : "glass border-white/5"
                       }`}
                     >
+                      <div className="text-2xl">{item.icon}</div>
                       <div
-                        className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                          item.active ? "bg-primary text-primary-foreground" : "bg-muted"
+                        className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${
+                          item.active ? "bg-white text-primary" : "glass"
                         }`}
                       >
                         {i + 1}
                       </div>
-                      <span className={item.active ? "font-semibold" : "text-muted-foreground"}>
+                      <span className={item.active ? "font-semibold text-white" : "text-foreground/60"}>
                         {item.label}
                       </span>
                     </div>
@@ -712,9 +718,44 @@ const InteractiveDemo = () => {
                 </div>
               </Card>
 
-              <Card className="p-6 bg-gradient-card">
-                <h3 className="font-semibold mb-3">What's Happening?</h3>
-                <div className="space-y-2 text-sm text-muted-foreground">
+              <Card className="glass-strong p-6 border-white/10 hover-glow">
+                <h3 className="font-semibold mb-3 gradient-text">What's Happening?</h3>
+                <div className="space-y-2 text-sm text-foreground/70">
+                  {step === "initial" && (
+                    <p>The system is monitoring network connectivity in real-time, ready to detect and alert about any issues.</p>
+                  )}
+                  {step === "detecting" && (
+                    <p>AI is analyzing network patterns and detecting a connectivity issue in your area.</p>
+                  )}
+                  {step === "notification" && (
+                    <p>A proactive notification is sent before you even notice the issue, with clear information about what's happening and estimated resolution time.</p>
+                  )}
+                  {step === "resolve-options" && (
+                    <p>The system offers multiple ways to get help - either through text chat or voice call with our AI assistant.</p>
+                  )}
+                  {step === "ai-chat" && (
+                    <p>Our AI chatbot uses Gemini 2.5 Flash to understand your issue and provide real-time troubleshooting guidance.</p>
+                  )}
+                  {step === "ai-call" && (
+                    <p>The AI voice assistant can handle complex conversations with natural language understanding and empathetic responses.</p>
+                  )}
+                  {(step === "ticket-creation" || step === "human-agent") && (
+                    <p>If AI can't fully resolve the issue, a support ticket is automatically created with all conversation history for seamless handoff to human agents.</p>
+                  )}
+                  {step === "completed" && (
+                    <p>The support journey is complete! The system successfully guided you through detection, AI assistance, ticket creation, and human escalation when needed.</p>
+                  )}
+                </div>
+              </Card>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default InteractiveDemo;
                   {step === "initial" && (
                     <p>The system is monitoring network connectivity in real-time, ready to detect and alert about any issues.</p>
                   )}
