@@ -16,16 +16,97 @@ const InteractiveDemo = () => {
   const [userInput, setUserInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [ticketId, setTicketId] = useState<string>("");
+  const [notificationData, setNotificationData] = useState<{
+    title: string;
+    message: string;
+    details: string;
+  }>({
+    title: "",
+    message: "",
+    details: ""
+  });
+  const [callTranscript, setCallTranscript] = useState<string[]>([]);
 
   const resetDemo = () => {
     setStep("initial");
     setChatMessages([]);
     setUserInput("");
     setTicketId("");
+    setNotificationData({ title: "", message: "", details: "" });
+    setCallTranscript([]);
   };
 
-  const startDemo = () => {
+  const generateProactiveNotification = async () => {
+    setIsLoading(true);
+    try {
+      const response = await supabase.functions.invoke("chat", {
+        body: {
+          messages: [
+            {
+              role: "system",
+              content: "You are a telecom network monitoring system. Generate a proactive customer notification about a detected network issue. Return ONLY a JSON object with: title (short alert title), message (brief explanation 2-3 sentences), details (what actions are being taken, 1-2 sentences). Be professional and reassuring."
+            },
+            {
+              role: "user",
+              content: "Network outage detected in customer's area. Generate notification."
+            }
+          ],
+        },
+      });
+
+      if (response.error) throw response.error;
+
+      const reader = response.data.getReader();
+      const decoder = new TextDecoder();
+      let fullResponse = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        
+        const chunk = decoder.decode(value);
+        const lines = chunk.split("\n");
+        
+        for (const line of lines) {
+          if (line.startsWith("data: ")) {
+            const data = line.slice(6);
+            if (data === "[DONE]") break;
+            
+            try {
+              const parsed = JSON.parse(data);
+              const content = parsed.choices?.[0]?.delta?.content;
+              if (content) {
+                fullResponse += content;
+              }
+            } catch (e) {
+              // Ignore parse errors
+            }
+          }
+        }
+      }
+
+      // Parse JSON from response
+      const jsonMatch = fullResponse.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        const notificationJson = JSON.parse(jsonMatch[0]);
+        setNotificationData(notificationJson);
+      }
+    } catch (error) {
+      console.error("Error generating notification:", error);
+      // Fallback notification
+      setNotificationData({
+        title: "Network Outage Alert",
+        message: "We've detected a network outage in your area. Our team is working on it. Expected resolution: 30 minutes.",
+        details: "What we're doing: Rerouting traffic through backup servers. No action needed from you."
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const startDemo = async () => {
     setStep("detecting");
+    await generateProactiveNotification();
     setTimeout(() => {
       setStep("notification");
     }, 2000);
@@ -35,19 +116,143 @@ const InteractiveDemo = () => {
     setStep("resolve-options");
   };
 
-  const handleAIChat = () => {
+  const handleAIChat = async () => {
     setStep("ai-chat");
-    setChatMessages([
-      { role: "assistant", content: "Hello! I understand you're experiencing network connectivity issues. Let me help you troubleshoot this problem. Can you tell me what device you're using?" }
-    ]);
+    setIsLoading(true);
+    
+    try {
+      const response = await supabase.functions.invoke("chat", {
+        body: {
+          messages: [
+            {
+              role: "system",
+              content: "You are a helpful telecom customer service AI. The customer is experiencing network connectivity issues. Greet them warmly and ask a helpful diagnostic question. Keep it brief (2-3 sentences)."
+            },
+            {
+              role: "user",
+              content: "Start conversation about network issue"
+            }
+          ],
+        },
+      });
+
+      if (response.error) throw response.error;
+
+      const reader = response.data.getReader();
+      const decoder = new TextDecoder();
+      let aiMessage = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        
+        const chunk = decoder.decode(value);
+        const lines = chunk.split("\n");
+        
+        for (const line of lines) {
+          if (line.startsWith("data: ")) {
+            const data = line.slice(6);
+            if (data === "[DONE]") break;
+            
+            try {
+              const parsed = JSON.parse(data);
+              const content = parsed.choices?.[0]?.delta?.content;
+              if (content) {
+                aiMessage += content;
+              }
+            } catch (e) {
+              // Ignore
+            }
+          }
+        }
+      }
+
+      setChatMessages([{ role: "assistant", content: aiMessage }]);
+    } catch (error) {
+      console.error("Error starting chat:", error);
+      setChatMessages([
+        { role: "assistant", content: "Hello! I understand you're experiencing network connectivity issues. Let me help you troubleshoot this problem. Can you tell me what device you're using?" }
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleAICall = () => {
+  const simulateAICall = async () => {
+    setIsLoading(true);
+    const transcript: string[] = [];
+    
+    try {
+      // Generate AI call conversation
+      const response = await supabase.functions.invoke("chat", {
+        body: {
+          messages: [
+            {
+              role: "system",
+              content: "Generate a realistic voice call transcript between an AI assistant and a customer with network issues. Format as alternating lines: 'AI: ...' and 'Customer: ...'. Include 4-6 exchanges total. Keep it natural and helpful. End with AI saying they'll create a ticket."
+            },
+            {
+              role: "user",
+              content: "Generate call transcript"
+            }
+          ],
+        },
+      });
+
+      if (response.error) throw response.error;
+
+      const reader = response.data.getReader();
+      const decoder = new TextDecoder();
+      let fullTranscript = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        
+        const chunk = decoder.decode(value);
+        const lines = chunk.split("\n");
+        
+        for (const line of lines) {
+          if (line.startsWith("data: ")) {
+            const data = line.slice(6);
+            if (data === "[DONE]") break;
+            
+            try {
+              const parsed = JSON.parse(data);
+              const content = parsed.choices?.[0]?.delta?.content;
+              if (content) {
+                fullTranscript += content;
+              }
+            } catch (e) {
+              // Ignore
+            }
+          }
+        }
+      }
+
+      const lines = fullTranscript.split("\n").filter(l => l.trim());
+      setCallTranscript(lines);
+    } catch (error) {
+      console.error("Error simulating call:", error);
+      setCallTranscript([
+        "AI: Hello, this is your telecom AI assistant. I understand you're experiencing network connectivity issues. Can you describe what's happening?",
+        "Customer: Yes, my internet keeps dropping every few minutes.",
+        "AI: I see. Let me check your connection status. It looks like there's an outage in your area. We're working on it, but let me see if we can improve things for you.",
+        "Customer: Okay, but I need internet for work right now.",
+        "AI: I understand this is urgent. I'll create a priority ticket for you and escalate this to our technical team immediately.",
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleAICall = async () => {
     setStep("ai-call");
     toast({
       title: "AI Voice Call Initiated",
       description: "Connecting you to our AI voice assistant...",
     });
+    await simulateAICall();
     setTimeout(() => {
       setStep("ticket-creation");
     }, 3000);
@@ -120,9 +325,65 @@ const InteractiveDemo = () => {
     setIsLoading(true);
     
     try {
-      const summary = chatMessages.length > 0 
-        ? `Customer experienced network connectivity issues. Chat history: ${chatMessages.slice(0, 3).map(m => m.content).join(" ")}`
-        : "Network connectivity issues detected. Customer unable to resolve through proactive notification.";
+      // Generate AI summary of the issue
+      let conversationContext = "";
+      if (chatMessages.length > 0) {
+        conversationContext = chatMessages.map(m => `${m.role}: ${m.content}`).join("\n");
+      } else if (callTranscript.length > 0) {
+        conversationContext = callTranscript.join("\n");
+      } else {
+        conversationContext = "Customer received proactive notification about network outage but issue persists.";
+      }
+
+      const summaryResponse = await supabase.functions.invoke("chat", {
+        body: {
+          messages: [
+            {
+              role: "system",
+              content: "You are a ticket summarization system. Create a concise technical summary (3-4 sentences) of this customer issue for a support ticket. Include key details and customer impact. Be professional and specific."
+            },
+            {
+              role: "user",
+              content: `Summarize this support interaction:\n\n${conversationContext}`
+            }
+          ],
+        },
+      });
+
+      let aiSummary = "Network connectivity issues affecting customer's service. Requires technical investigation and resolution.";
+      
+      if (!summaryResponse.error) {
+        const reader = summaryResponse.data.getReader();
+        const decoder = new TextDecoder();
+        let summary = "";
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          
+          const chunk = decoder.decode(value);
+          const lines = chunk.split("\n");
+          
+          for (const line of lines) {
+            if (line.startsWith("data: ")) {
+              const data = line.slice(6);
+              if (data === "[DONE]") break;
+              
+              try {
+                const parsed = JSON.parse(data);
+                const content = parsed.choices?.[0]?.delta?.content;
+                if (content) {
+                  summary += content;
+                }
+              } catch (e) {
+                // Ignore
+              }
+            }
+          }
+        }
+        
+        if (summary) aiSummary = summary;
+      }
 
       const { data, error } = await supabase
         .from("tickets")
@@ -130,8 +391,9 @@ const InteractiveDemo = () => {
           customer_name: "Demo User",
           customer_email: "demo@example.com",
           customer_phone: "+1234567890",
-          title: "Network Connectivity Issue",
-          description: summary,
+          title: "Network Connectivity Issue - Priority Escalation",
+          description: conversationContext,
+          ai_summary: aiSummary,
           category: "technical",
           priority: "high",
           status: "open",
@@ -146,7 +408,7 @@ const InteractiveDemo = () => {
       
       toast({
         title: "Ticket Created",
-        description: `Ticket #${data.id.slice(0, 8)} has been automatically generated`,
+        description: `Ticket #${data.id.slice(0, 8)} with AI-generated summary`,
       });
     } catch (error) {
       console.error("Ticket creation error:", error);
@@ -224,26 +486,39 @@ const InteractiveDemo = () => {
 
                     {step === "notification" && (
                       <Card className="p-6 bg-gradient-card">
-                        <div className="flex items-start gap-3 mb-4">
-                          <WifiOff className="h-6 w-6 text-destructive flex-shrink-0 mt-1" />
-                          <div>
-                            <h3 className="font-semibold text-lg mb-2">Network Outage Alert</h3>
-                            <p className="text-sm text-muted-foreground mb-3">
-                              We've detected a network outage in your area. Our team is working on it. Expected resolution: 30 minutes.
-                            </p>
-                            <p className="text-xs text-muted-foreground mb-4">
-                              <strong>What we're doing:</strong> Rerouting traffic through backup servers. No action needed from you.
-                            </p>
+                        {isLoading ? (
+                          <div className="text-center py-8">
+                            <div className="animate-pulse">
+                              <WifiOff className="h-12 w-12 text-destructive mx-auto mb-4" />
+                              <p className="text-sm text-muted-foreground">Analyzing network status...</p>
+                            </div>
                           </div>
-                        </div>
-                        <div className="flex gap-2">
-                          <Button variant="outline" size="sm" className="flex-1" onClick={() => setStep("completed")}>
-                            OK, Thanks
-                          </Button>
-                          <Button size="sm" className="flex-1" onClick={handleNotResolved}>
-                            Not Resolved
-                          </Button>
-                        </div>
+                        ) : (
+                          <>
+                            <div className="flex items-start gap-3 mb-4">
+                              <WifiOff className="h-6 w-6 text-destructive flex-shrink-0 mt-1" />
+                              <div>
+                                <h3 className="font-semibold text-lg mb-2">
+                                  {notificationData.title || "Network Outage Alert"}
+                                </h3>
+                                <p className="text-sm text-muted-foreground mb-3">
+                                  {notificationData.message || "We've detected a network issue in your area."}
+                                </p>
+                                <p className="text-xs text-muted-foreground mb-4">
+                                  <strong>What we're doing:</strong> {notificationData.details || "Working on resolution."}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="flex gap-2">
+                              <Button variant="outline" size="sm" className="flex-1" onClick={() => setStep("completed")}>
+                                OK, Thanks
+                              </Button>
+                              <Button size="sm" className="flex-1" onClick={handleNotResolved}>
+                                Not Resolved
+                              </Button>
+                            </div>
+                          </>
+                        )}
                       </Card>
                     )}
 
@@ -318,14 +593,38 @@ const InteractiveDemo = () => {
                     )}
 
                     {step === "ai-call" && (
-                      <div className="flex flex-col items-center justify-center h-full">
-                        <div className="bg-primary/20 rounded-full p-8 mb-4 animate-pulse">
-                          <Phone className="h-16 w-16 text-primary" />
+                      <div className="flex flex-col h-full">
+                        <div className="text-center mb-4">
+                          <div className="bg-primary/20 rounded-full p-6 inline-block mb-3 animate-pulse">
+                            <Phone className="h-12 w-12 text-primary" />
+                          </div>
+                          <h3 className="text-lg font-semibold mb-1">AI Voice Call Active</h3>
+                          <p className="text-xs text-muted-foreground">Real-time conversation</p>
                         </div>
-                        <h3 className="text-xl font-semibold mb-2">AI Voice Call Active</h3>
-                        <p className="text-muted-foreground text-center text-sm">
-                          Our AI assistant is analyzing your issue...
-                        </p>
+                        
+                        {isLoading ? (
+                          <div className="flex-1 flex items-center justify-center">
+                            <p className="text-sm text-muted-foreground animate-pulse">Processing conversation...</p>
+                          </div>
+                        ) : (
+                          <div className="flex-1 space-y-2 overflow-y-auto">
+                            {callTranscript.map((line, i) => {
+                              const isAI = line.startsWith("AI:");
+                              return (
+                                <div
+                                  key={i}
+                                  className={`p-2 rounded text-xs ${
+                                    isAI 
+                                      ? "bg-primary/10 text-left" 
+                                      : "bg-secondary/10 text-right ml-8"
+                                  }`}
+                                >
+                                  {line}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
                       </div>
                     )}
 
