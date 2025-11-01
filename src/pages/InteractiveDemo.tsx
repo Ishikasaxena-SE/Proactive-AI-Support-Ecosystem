@@ -756,38 +756,3 @@ const InteractiveDemo = () => {
 };
 
 export default InteractiveDemo;
-                  {step === "initial" && (
-                    <p>The system is monitoring network connectivity in real-time, ready to detect and alert about any issues.</p>
-                  )}
-                  {step === "detecting" && (
-                    <p>AI is analyzing network patterns and detecting a connectivity issue in your area.</p>
-                  )}
-                  {step === "notification" && (
-                    <p>A proactive notification is sent before you even notice the issue, with clear information about what's happening and estimated resolution time.</p>
-                  )}
-                  {step === "resolve-options" && (
-                    <p>The system offers multiple ways to get help - either through text chat or voice call with our AI assistant.</p>
-                  )}
-                  {step === "ai-chat" && (
-                    <p>Our AI chatbot uses Gemini 2.5 Flash to understand your issue and provide real-time troubleshooting guidance.</p>
-                  )}
-                  {step === "ai-call" && (
-                    <p>The AI voice assistant can handle complex conversations with natural language understanding and empathetic responses.</p>
-                  )}
-                  {(step === "ticket-creation" || step === "human-agent") && (
-                    <p>If AI can't fully resolve the issue, a support ticket is automatically created with all conversation history for seamless handoff to human agents.</p>
-                  )}
-                  {step === "completed" && (
-                    <p>The support journey is complete! The system successfully guided you through detection, AI assistance, ticket creation, and human escalation when needed.</p>
-                  )}
-                </div>
-              </Card>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default InteractiveDemo;

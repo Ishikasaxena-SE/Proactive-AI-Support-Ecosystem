@@ -12,6 +12,7 @@ import ChatbotAssistant from "./pages/ChatbotAssistant";
 import AICaller from "./pages/AICaller";
 import SmartTicketing from "./pages/SmartTicketing";
 import InteractiveDemo from "./pages/InteractiveDemo";
+import SMSSummarizer from "./pages/SMSSummarizer";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();

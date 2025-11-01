@@ -57,6 +57,10 @@ const Index = () => {
                 Try Interactive Demo
                 <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-2 transition-transform" />
               </Button>
+              <Button size="lg" className="bg-gradient-secondary hover-glow interactive-scale group" onClick={() => navigate('/sms-summarizer')}>
+                SMS Summarizer
+                <MessageSquare className="ml-2 h-4 w-4 group-hover:scale-110 transition-transform" />
+              </Button>
               <Button size="lg" className="glass border-white/20 hover:bg-white/10 interactive-scale" onClick={() => navigate('/tickets')}>
                 View Tickets
               </Button>
