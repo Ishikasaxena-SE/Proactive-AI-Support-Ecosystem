@@ -39,8 +39,13 @@ const InteractiveDemo = () => {
   const generateProactiveNotification = async () => {
     setIsLoading(true);
     try {
-      const response = await supabase.functions.invoke("chat", {
-        body: {
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({
           messages: [
             {
               role: "system",
@@ -51,12 +56,12 @@ const InteractiveDemo = () => {
               content: "Network outage detected in customer's area. Generate notification."
             }
           ],
-        },
+        }),
       });
 
-      if (response.error) throw response.error;
+      if (!response.ok || !response.body) throw new Error('Failed to fetch');
 
-      const reader = response.data.getReader();
+      const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let fullResponse = "";
 
@@ -121,8 +126,13 @@ const InteractiveDemo = () => {
     setIsLoading(true);
     
     try {
-      const response = await supabase.functions.invoke("chat", {
-        body: {
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({
           messages: [
             {
               role: "system",
@@ -133,12 +143,12 @@ const InteractiveDemo = () => {
               content: "Start conversation about network issue"
             }
           ],
-        },
+        }),
       });
 
-      if (response.error) throw response.error;
+      if (!response.ok || !response.body) throw new Error('Failed to fetch');
 
-      const reader = response.data.getReader();
+      const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let aiMessage = "";
 
@@ -183,9 +193,13 @@ const InteractiveDemo = () => {
     const transcript: string[] = [];
     
     try {
-      // Generate AI call conversation
-      const response = await supabase.functions.invoke("chat", {
-        body: {
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({
           messages: [
             {
               role: "system",
@@ -196,12 +210,12 @@ const InteractiveDemo = () => {
               content: "Generate call transcript"
             }
           ],
-        },
+        }),
       });
 
-      if (response.error) throw response.error;
+      if (!response.ok || !response.body) throw new Error('Failed to fetch');
 
-      const reader = response.data.getReader();
+      const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let fullTranscript = "";
 
@@ -267,15 +281,20 @@ const InteractiveDemo = () => {
     setIsLoading(true);
 
     try {
-      const response = await supabase.functions.invoke("chat", {
-        body: {
-          messages: [...chatMessages, newMessage],
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
+        body: JSON.stringify({
+          messages: [...chatMessages, newMessage],
+        }),
       });
 
-      if (response.error) throw response.error;
+      if (!response.ok || !response.body) throw new Error('Failed to fetch');
 
-      const reader = response.data.getReader();
+      const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let aiResponse = "";
 
@@ -335,8 +354,13 @@ const InteractiveDemo = () => {
         conversationContext = "Customer received proactive notification about network outage but issue persists.";
       }
 
-      const summaryResponse = await supabase.functions.invoke("chat", {
-        body: {
+      const summaryResponse = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({
           messages: [
             {
               role: "system",
@@ -347,13 +371,13 @@ const InteractiveDemo = () => {
               content: `Summarize this support interaction:\n\n${conversationContext}`
             }
           ],
-        },
+        }),
       });
 
       let aiSummary = "Network connectivity issues affecting customer's service. Requires technical investigation and resolution.";
       
-      if (!summaryResponse.error) {
-        const reader = summaryResponse.data.getReader();
+      if (summaryResponse.ok && summaryResponse.body) {
+        const reader = summaryResponse.body.getReader();
         const decoder = new TextDecoder();
         let summary = "";
 

@@ -25,9 +25,16 @@ const SMSSummarizer = () => {
     }
 
     setIsLoading(true);
+    setSummary("");
+    
     try {
-      const { data, error } = await supabase.functions.invoke("chat", {
-        body: {
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({
           messages: [
             {
               role: "system",
@@ -38,12 +45,12 @@ const SMSSummarizer = () => {
               content: `Please summarize the following SMS message:\n\n${smsText}`,
             },
           ],
-        },
+        }),
       });
 
-      if (error) throw error;
+      if (!response.ok || !response.body) throw new Error('Failed to fetch');
 
-      const reader = data.getReader();
+      const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let fullText = "";
 

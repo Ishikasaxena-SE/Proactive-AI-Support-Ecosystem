@@ -33,6 +33,7 @@ const App = () => (
           <Route path="/ai-caller" element={<AICaller />} />
           <Route path="/smart-ticketing" element={<SmartTicketing />} />
           <Route path="/demo" element={<InteractiveDemo />} />
+          <Route path="/sms-summarizer" element={<SMSSummarizer />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
