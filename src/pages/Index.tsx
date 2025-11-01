@@ -19,30 +19,44 @@ const Index = () => {
       <NotificationPanel />
       <ChatBot />
       {/* Navigation */}
-      <nav className="fixed top-0 w-full glass-strong backdrop-blur-xl border-b border-white/10 z-50">
+      <nav className="fixed top-0 w-full glass-strong backdrop-blur-xl border-b border-white/10 z-50 neon-border">
         <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-          <div className="text-2xl font-bold gradient-text">
-            Proactive AI Support
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-gradient-primary flex items-center justify-center shadow-glow">
+              <Zap className="h-6 w-6 text-white animate-pulse-slow" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold gradient-text">TelecomAI</h1>
+              <p className="text-xs text-foreground/50 hidden sm:block">Proactive AI Support</p>
+            </div>
           </div>
           <div className="hidden md:flex gap-8">
-            <a href="#solution" className="text-foreground/80 hover:text-foreground transition-colors hover:scale-105 transform duration-300">Solution</a>
-            <a href="#impact" className="text-foreground/80 hover:text-foreground transition-colors hover:scale-105 transform duration-300">Impact</a>
-            <a href="#demo" className="text-foreground/80 hover:text-foreground transition-colors hover:scale-105 transform duration-300">Demo</a>
+            <a href="#solution" className="text-foreground/80 hover:text-primary transition-all hover:scale-105 transform duration-300 font-medium">Solution</a>
+            <a href="#impact" className="text-foreground/80 hover:text-primary transition-all hover:scale-105 transform duration-300 font-medium">Impact</a>
+            <a href="#demo" className="text-foreground/80 hover:text-primary transition-all hover:scale-105 transform duration-300 font-medium">Demo</a>
           </div>
-          <Button className="bg-gradient-primary hover:shadow-glow interactive-scale">
-            Contact Us
+          <Button className="bg-gradient-primary hover-glow interactive-scale neon-border group">
+            <span className="relative z-10">Contact Us</span>
+            <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform relative z-10" />
           </Button>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 px-6 overflow-hidden">
+      <section className="relative pt-32 pb-20 px-6 overflow-hidden tech-grid">
         <div className="absolute inset-0 bg-gradient-mesh opacity-50"></div>
         <div className="absolute top-20 left-10 w-72 h-72 bg-primary/20 rounded-full blur-3xl animate-float"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-secondary/20 rounded-full blur-3xl animate-float" style={{ animationDelay: "1s" }}></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-secondary/20 rounded-full blur-3xl animate-float-slow" style={{ animationDelay: "1s" }}></div>
+        <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-accent/20 rounded-full blur-3xl animate-float-slower" style={{ animationDelay: "2s" }}></div>
+        
         <div className="container mx-auto relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-8 animate-fade-in">
+              <div className="inline-block shimmer">
+                <span className="inline-block px-4 py-2 rounded-full glass border border-primary/30 text-sm font-medium">
+                  ✨ Next-Gen Customer Support
+                </span>
+              </div>
               <h1 className="text-5xl md:text-7xl font-bold leading-tight">
                 Revolutionizing Telecom Support with{" "}
                 <span className="gradient-text animate-glow-pulse">
@@ -53,26 +67,28 @@ const Index = () => {
                 Proactive, Intelligent, and Human-Centric customer support ecosystem that predicts issues before they arise.
               </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button size="lg" className="bg-gradient-primary hover-glow interactive-scale group" onClick={() => navigate('/demo')}>
-                Try Interactive Demo
-                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-2 transition-transform" />
+              <Button size="lg" className="bg-gradient-primary hover-glow interactive-scale group neon-border relative overflow-hidden" onClick={() => navigate('/demo')}>
+                <span className="relative z-10">Try Interactive Demo</span>
+                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-2 transition-transform relative z-10" />
               </Button>
-              <Button size="lg" className="bg-gradient-secondary hover-glow interactive-scale group" onClick={() => navigate('/sms-summarizer')}>
+              <Button size="lg" className="bg-gradient-secondary hover-glow interactive-scale group shimmer" onClick={() => navigate('/sms-summarizer')}>
                 SMS Summarizer
                 <MessageSquare className="ml-2 h-4 w-4 group-hover:scale-110 transition-transform" />
               </Button>
-              <Button size="lg" className="glass border-white/20 hover:bg-white/10 interactive-scale" onClick={() => navigate('/tickets')}>
+              <Button size="lg" className="glass border-white/20 hover:bg-white/10 interactive-scale gradient-border" onClick={() => navigate('/tickets')}>
                 View Tickets
               </Button>
             </div>
             </div>
             <div className="relative animate-scale-in">
-              <div className="absolute inset-0 bg-gradient-primary opacity-30 blur-3xl rounded-full"></div>
-              <img
-                src={heroImage}
-                alt="AI-powered telecom support"
-                className="relative rounded-3xl shadow-2xl border border-white/10 hover-glow transition-all duration-500"
-              />
+              <div className="absolute inset-0 bg-gradient-primary opacity-30 blur-3xl rounded-full animate-pulse"></div>
+              <div className="relative neon-border rounded-3xl overflow-hidden">
+                <img
+                  src={heroImage}
+                  alt="AI-powered telecom support"
+                  className="relative rounded-3xl shadow-2xl border border-white/10 hover-glow transition-all duration-500 hover:scale-105"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -154,17 +170,20 @@ const Index = () => {
             ].map((feature, i) => (
               <Card
                 key={i}
-                className="glass-strong p-6 hover-glow interactive-scale group animate-slide-up border-white/10 relative overflow-hidden"
+                className="glass-strong p-6 hover-glow interactive-scale group animate-slide-up border-white/10 relative overflow-hidden shimmer"
                 style={{ animationDelay: `${i * 0.1}s` }}
               >
                 <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}></div>
                 <div className="mb-4 transform group-hover:scale-110 transition-transform duration-500 relative">
-                  <img src={feature.icon} alt={feature.title} className="h-20 w-20 mx-auto drop-shadow-glow" />
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-gradient-primary opacity-50 blur-2xl group-hover:opacity-100 transition-opacity"></div>
+                    <img src={feature.icon} alt={feature.title} className="h-20 w-20 mx-auto drop-shadow-glow relative z-10" />
+                  </div>
                 </div>
-                <h3 className="text-xl font-semibold mb-3 text-center">{feature.title}</h3>
+                <h3 className="text-xl font-semibold mb-3 text-center group-hover:text-primary transition-colors">{feature.title}</h3>
                 <p className="text-foreground/60 text-center text-sm mb-4 flex-grow">{feature.desc}</p>
                 <Button
-                  className="w-full mt-auto bg-gradient-primary hover-glow group/btn"
+                  className="w-full mt-auto bg-gradient-primary hover-glow group/btn neon-border"
                   onClick={() => navigate(`/${feature.action}`)}
                 >
                   {feature.cta}
