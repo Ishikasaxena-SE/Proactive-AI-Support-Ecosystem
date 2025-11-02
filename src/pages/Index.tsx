@@ -60,23 +60,24 @@ const Index = () => {
               </div>
               <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
                 Revolutionizing Telecom Support with{" "}
-                <span className="gradient-text animate-glow-pulse">
-                  AI
+                <span className="gradient-text animate-glow-pulse drop-shadow-glow">
+                  Proactive AI
                 </span>
               </h1>
-              <p className="text-base sm:text-xl text-foreground/70">
-                Proactive, Intelligent, and Human-Centric customer support ecosystem that predicts issues before they arise.
+              <p className="text-base sm:text-xl text-foreground/70 leading-relaxed">
+                Transform customer support with an intelligent, proactive ecosystem that predicts and solves issues before they impact your customers.
               </p>
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-              <Button size="lg" className="bg-gradient-primary hover-glow interactive-scale group neon-border relative overflow-hidden" onClick={() => navigate('/demo')}>
-                <span className="relative z-10">Try Interactive Demo</span>
-                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-2 transition-transform relative z-10" />
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center">
+              <Button size="lg" className="bg-gradient-primary hover-glow interactive-scale group neon-border relative overflow-hidden shadow-glow" onClick={() => navigate('/demo')}>
+                <span className="relative z-10 font-semibold">Try Interactive Demo</span>
+                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-2 transition-transform relative z-10" />
               </Button>
-              <Button size="lg" className="bg-gradient-secondary hover-glow interactive-scale group shimmer" onClick={() => navigate('/sms-summarizer')}>
+              <Button size="lg" className="bg-gradient-secondary hover-glow interactive-scale group shimmer shadow-glow-secondary" onClick={() => navigate('/sms-summarizer')}>
+                <MessageSquare className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" />
                 SMS Summarizer
-                <MessageSquare className="ml-2 h-4 w-4 group-hover:scale-110 transition-transform" />
               </Button>
-              <Button size="lg" className="glass border-white/20 hover:bg-white/10 interactive-scale gradient-border" onClick={() => navigate('/tickets')}>
+              <Button size="lg" variant="outline" className="glass border-white/30 hover:bg-white/10 interactive-scale gradient-border" onClick={() => navigate('/tickets')}>
+                <Ticket className="mr-2 h-4 w-4" />
                 View Tickets
               </Button>
             </div>
@@ -100,8 +101,13 @@ const Index = () => {
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent"></div>
         <div className="container mx-auto relative z-10">
           <div className="text-center mb-12 sm:mb-16 animate-fade-in-up">
+            <div className="inline-block mb-4">
+              <span className="inline-block px-4 py-2 rounded-full glass border border-accent/30 text-sm font-medium text-accent">
+                The Problem
+              </span>
+            </div>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 gradient-text">The Telecom Support Challenge</h2>
-            <p className="text-base sm:text-xl text-foreground/70 max-w-3xl mx-auto px-4">
+            <p className="text-base sm:text-xl text-foreground/70 max-w-3xl mx-auto px-4 leading-relaxed">
               Traditional customer support struggles with reactive approaches, leading to frustrated customers and overwhelmed teams.
             </p>
           </div>
@@ -126,10 +132,15 @@ const Index = () => {
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-accent/20 rounded-full blur-3xl"></div>
         <div className="container mx-auto relative z-10">
           <div className="text-center mb-12 sm:mb-16 animate-fade-in-up">
+            <div className="inline-block mb-4">
+              <span className="inline-block px-4 py-2 rounded-full glass border border-primary/30 text-sm font-medium shimmer">
+                Our Solution
+              </span>
+            </div>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
-              Our <span className="gradient-text">4-Part AI Ecosystem</span>
+              Our <span className="gradient-text drop-shadow-glow">4-Part AI Ecosystem</span>
             </h2>
-            <p className="text-base sm:text-xl text-foreground/70 max-w-3xl mx-auto px-4">
+            <p className="text-base sm:text-xl text-foreground/70 max-w-3xl mx-auto px-4 leading-relaxed">
               A comprehensive solution that combines proactive intelligence with human empathy
             </p>
           </div>
@@ -237,9 +248,14 @@ const Index = () => {
       <section id="impact" className="py-12 sm:py-20 px-4 sm:px-6">
         <div className="container mx-auto">
           <div className="text-center mb-12 sm:mb-16 animate-fade-in-up">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 gradient-text">Measurable Impact</h2>
-            <p className="text-base sm:text-xl text-foreground/70 px-4">
-              Transform your support operations with quantifiable results
+            <div className="inline-block mb-4">
+              <span className="inline-block px-4 py-2 rounded-full glass border border-secondary/30 text-sm font-medium text-secondary">
+                Results That Matter
+              </span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 gradient-text drop-shadow-glow">Measurable Impact</h2>
+            <p className="text-base sm:text-xl text-foreground/70 px-4 leading-relaxed max-w-2xl mx-auto">
+              Transform your support operations with quantifiable results that drive business growth
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
@@ -337,36 +353,64 @@ const Index = () => {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border py-8 sm:py-12 px-4 sm:px-6">
-        <div className="container mx-auto">
-          <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
-            <div className="col-span-2">
-              <div className="text-xl sm:text-2xl font-bold bg-gradient-hero bg-clip-text text-transparent mb-4">
-                Proactive AI Support Ecosystem
+      <footer className="relative border-t border-border py-8 sm:py-12 px-4 sm:px-6 glass-strong">
+        <div className="absolute inset-0 bg-gradient-mesh opacity-30"></div>
+        <div className="container mx-auto relative z-10">
+          <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 mb-8">
+            <div className="col-span-full sm:col-span-2">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-lg bg-gradient-primary flex items-center justify-center shadow-glow">
+                  <Zap className="h-6 w-6 text-white" />
+                </div>
+                <div className="text-xl sm:text-2xl font-bold gradient-text">
+                  TelecomAI
+                </div>
               </div>
-              <p className="text-sm sm:text-base text-muted-foreground mb-4">
-                Revolutionizing telecom customer support with intelligent, proactive AI solutions.
+              <p className="text-sm sm:text-base text-foreground/70 mb-4 max-w-md">
+                Revolutionizing telecom customer support with intelligent, proactive AI solutions that predict and solve issues before they impact your customers.
               </p>
+              <div className="flex gap-4">
+                <a href="#" className="w-10 h-10 rounded-full glass border border-white/10 flex items-center justify-center hover:bg-primary/20 transition-all hover:scale-110">
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg>
+                </a>
+                <a href="#" className="w-10 h-10 rounded-full glass border border-white/10 flex items-center justify-center hover:bg-primary/20 transition-all hover:scale-110">
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"/></svg>
+                </a>
+                <a href="#" className="w-10 h-10 rounded-full glass border border-white/10 flex items-center justify-center hover:bg-primary/20 transition-all hover:scale-110">
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                </a>
+              </div>
             </div>
             <div>
               <h4 className="font-semibold mb-3 sm:mb-4 text-sm sm:text-base">Product</h4>
-              <ul className="space-y-2 text-sm sm:text-base text-muted-foreground">
-                <li><a href="#solution" className="hover:text-primary transition-colors">Solution</a></li>
-                <li><a href="#impact" className="hover:text-primary transition-colors">Impact</a></li>
-                <li><a href="#demo" className="hover:text-primary transition-colors">Demo</a></li>
+              <ul className="space-y-2 text-sm sm:text-base text-foreground/60">
+                <li><a href="#solution" className="hover:text-primary transition-colors hover:translate-x-1 inline-block">Solution</a></li>
+                <li><a href="#impact" className="hover:text-primary transition-colors hover:translate-x-1 inline-block">Impact</a></li>
+                <li><a href="#demo" className="hover:text-primary transition-colors hover:translate-x-1 inline-block">Demo</a></li>
+                <li><a href="/demo" className="hover:text-primary transition-colors hover:translate-x-1 inline-block">Try Demo</a></li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold mb-3 sm:mb-4 text-sm sm:text-base">Company</h4>
-              <ul className="space-y-2 text-sm sm:text-base text-muted-foreground">
-                <li><a href="#" className="hover:text-primary transition-colors">About</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">Contact</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">Careers</a></li>
+              <ul className="space-y-2 text-sm sm:text-base text-foreground/60">
+                <li><a href="#" className="hover:text-primary transition-colors hover:translate-x-1 inline-block">About</a></li>
+                <li><a href="#" className="hover:text-primary transition-colors hover:translate-x-1 inline-block">Contact</a></li>
+                <li><a href="#" className="hover:text-primary transition-colors hover:translate-x-1 inline-block">Careers</a></li>
+                <li><a href="#" className="hover:text-primary transition-colors hover:translate-x-1 inline-block">Privacy</a></li>
               </ul>
             </div>
           </div>
-          <div className="border-t border-border mt-6 sm:mt-8 pt-6 sm:pt-8 text-center text-sm sm:text-base text-muted-foreground">
-            <p>© 2025 Ishika Saxena. All rights reserved.</p>
+          <div className="border-t border-white/10 pt-6 sm:pt-8">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+              <p className="text-sm sm:text-base text-foreground/60">
+                © 2025 <span className="gradient-text font-semibold">Ishika Saxena</span>. All rights reserved.
+              </p>
+              <div className="flex gap-6 text-sm text-foreground/60">
+                <a href="#" className="hover:text-primary transition-colors">Terms</a>
+                <a href="#" className="hover:text-primary transition-colors">Privacy</a>
+                <a href="#" className="hover:text-primary transition-colors">Cookies</a>
+              </div>
+            </div>
           </div>
         </div>
       </footer>
